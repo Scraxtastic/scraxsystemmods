@@ -58,7 +58,7 @@ const main = async () => {
       }
       socket.send(JSON.stringify({ name: "Ollama", type: "ModChatFinishedMessage" }));
     } else if (message.type === "ModAliveMessage") {
-      console.log("Alive message received");
+      // console.log("Alive message received");
     }
   });
 };
