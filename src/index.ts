@@ -34,6 +34,7 @@ const main = async () => {
   socket.on("close", () => {
     console.log("Disconnected from server");
     clearInterval(interval);
+    process.exit(0);
   });
 
   socket.on("message", async (data) => {
