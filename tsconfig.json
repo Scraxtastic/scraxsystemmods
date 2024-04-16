@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "module": "ES2022",
-    "allowJs": true,
+    "module": "CommonJS",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
@@ -14,7 +13,6 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "lib": ["ES6"]
   },
   "ts-node": {
     "esm": true

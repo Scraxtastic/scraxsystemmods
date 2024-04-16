@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
-  "type": "module",
   "scripts": {
     "start": "npm run build && node .",
     "dev": "nodemon src/index.ts",
@@ -13,7 +12,7 @@
   "author": "",
   "license": "TODO",
   "dependencies": {
-    "node-fetch": "^2.6.1",
+    "camera-capture": "^0.0.11",
     "ollama": "^0.4.9",
     "ws": "^8.16.0"
   },
