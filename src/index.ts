@@ -3,7 +3,9 @@
 // import { ModFirstMessage } from "./models/ModFirstMessage";
 // import { ModAliveMessage } from "./models/ModAliveMessage";
 // import { ModChatMessage } from "./models/ModChatMessage";
+import path from "path";
 import { captureImages } from "./camera/camera";
+import { NAS } from "./nas/nas";
 
 // export const sendMessage = async (
 //   messageContent: string,
@@ -15,8 +17,23 @@ import { captureImages } from "./camera/camera";
 
 const main = async () => {
   console.log("Start");
-
-  const c = await captureImages("image/jpeg");
+  const nas = new NAS(path.join(__dirname, ".."));
+  console.log(nas.getBasePath());
+  console.log(nas.getFullPath());
+  console.log(nas.listDirectory());
+  nas.changeDirectory("tmp");
+  console.log(nas.getFullPath());
+  console.log(nas.listDirectory());
+  nas.changeDirectory("..");
+  console.log(nas.getFullPath());
+  console.log(nas.listDirectory());
+  nas.changeDirectory("../..");
+  console.log(nas.getFullPath());
+  console.log(nas.listDirectory());
+  nas.changeDirectory("tmp");
+  console.log(nas.getFullPath());
+  console.log(nas.listDirectory());
+  // const c = await captureImages("image/jpeg");
   // const counts: number[] = [];
   // const counts2: number[] = [];
   // const counts3: number[] = [];
