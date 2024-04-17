@@ -5,7 +5,6 @@ export class NAS {
   private basePath: string;
   private currentPath: string = "/";
   constructor(basePath: string) {
-    console.log("NAS constructor");
     this.basePath = basePath;
   }
 
@@ -19,12 +18,12 @@ export class NAS {
 
   public changeDirectory(dir: string): void {
     console.log("Changing directory to", path.join(this.currentPath, dir.replace(/[\\\/]+/g, "")));
-    const newPath = path.join(this.currentPath, dir.replace(/[\\\/]+/g, ""), "/");
+    const newPath = path.join(this.currentPath, dir, "/");
     if (!fs.existsSync(path.join(this.basePath, newPath))) {
       console.log("Directory does not exist. Canceling operation.");
       return;
     }
-    this.currentPath = path.join(this.currentPath, dir.replace(/[\\\/]+/g, ""), "/");
+    this.currentPath = path.join(this.currentPath, dir, "/");
   }
 
   public listDirectory(): string[] {
