@@ -33,6 +33,10 @@ const main = async () => {
   nas.changeDirectory("tmp");
   console.log(nas.getFullPath());
   console.log(nas.listDirectory());
+  nas.changeDirectory("..");
+  console.log(nas.getFullPath());
+  nas.changeDirectory("..");
+  console.log(nas.getFullPath());
   // const c = await captureImages("image/jpeg");
   // const counts: number[] = [];
   // const counts2: number[] = [];
