@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { createInterface } from "readline";
 
 export class NAS {
   private basePath: string;
@@ -50,26 +51,22 @@ export class NAS {
     return fs.readFileSync(path.join(this.getFullPath(), file)).toString();
   }
 
-  public getFilesAsync(files: string[]): Promise<string[]> {
-    return new Promise((resolve) => {
-      const promises = files.map((file) => {
-        return new Promise((resolve) => {
-          fs.readFile(path.join(this.getFullPath(), file), (err, data) => {
-            resolve(data.toString());
-          });
-        });
-      });
-      Promise.all(promises).then((values: string[]) => {
-        resolve(values);
-      });
+  public async getFileAsnyc(file: string, onLinesRead: (lines: string[]) => void, lineSplitterSize = 100000): Promise<void> {
+    const fileStream = fs.createReadStream(path.join(this.getFullPath(), file));
+    const rl = createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
     });
-  }
-
-  public getFileAsync(file: string): Promise<string> {
-    return new Promise((resolve) => {
-      fs.readFile(path.join(this.getFullPath(), file), (err, data) => {
-        resolve(data.toString());
-      });
-    });
+    let linesToSave: string[] = [];
+    for await (const line of rl) {
+      linesToSave.push(line);
+      if (linesToSave.length >= lineSplitterSize) {
+        onLinesRead(linesToSave);
+        linesToSave = [];
+      }   
+    }
+    if(linesToSave.length > 0) {
+      onLinesRead(linesToSave);
+    }
   }
 }
