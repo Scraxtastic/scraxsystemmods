@@ -5,6 +5,7 @@ import { ModAliveMessage } from "./models/ModAliveMessage";
 import { ModChatMessage } from "./models/ModChatMessage";
 import { ModType } from "./models/ModType";
 import { Chat } from "./mods/chat/chat/chat";
+import { NAS } from "./mods/nas/nas";
 
 // export const sendMessage = async (
 //   messageContent: string,
@@ -19,14 +20,30 @@ export type RegisterModType = (
   onUpdate: (message: string) => void,
   onClose: () => void
 ) => void;
-export type SendMessageType = (message: string) => void;
+export type SendMessageType = (name: string, message: string, socket: WebSocket) => void;
+export type ModProps = {
+  name: string;
+  modType: ModType;
+  socket: WebSocket;
+  onUpdate: (name: string, message: string, socket: WebSocket) => void;
+  onClose: () => void;
+  interval?: NodeJS.Timeout;
+};
 const registeredMods: any[] = [];
 
 const main = async () => {
   registerMods();
 };
 
-const sendMessage: SendMessageType = (message: string) => {};
+const sendMessage: SendMessageType = (name: string, message: string, socket: WebSocket) => {
+  console.log("Mod: ", "Sending message", message);
+  const modChatMessage: ModChatMessage = {
+    name: name,
+    message: message,
+    type: "ModChatMessage",
+  };
+  socket.send(JSON.stringify(modChatMessage));
+};
 
 const registerMods = () => {
   const chat = new Chat(registerMod, sendMessage);
@@ -41,7 +58,7 @@ const registerMod: RegisterModType = (
   console.log("Start");
   const serverIP = "ws://localhost:8989";
   const socket = new WebSocket(serverIP);
-  let mod = { name: name, modType: modType, socket: socket, onUpdate: onUpdate, onClose: onClose };
+  let mod: ModProps = { name: name, modType: modType, socket: socket, onUpdate: onUpdate, onClose: onClose };
   socket.on("open", () => {
     handleOnOpen(socket, mod);
   });
@@ -49,7 +66,7 @@ const registerMod: RegisterModType = (
     handleOnClose();
   });
   socket.on("message", async (data) => {
-    handleMessage(data, socket);
+    handleMessage(data, mod);
   });
   registeredMods.push(mod);
 };
@@ -79,18 +96,12 @@ const handleOnClose = () => {
   process.exit(0);
 };
 
-const handleMessage = async (data: RawData, socket: WebSocket) => {
+const handleMessage = async (data: RawData, mod: ModProps) => {
   const message: ModAliveMessage | ModChatMessage = JSON.parse(data.toString());
   if (message.type === "ModChatMessage") {
     const chatMessage = message as ModChatMessage;
     console.log("Chat message received", chatMessage);
-
-    let currentOutput = "";
-
-    if (currentOutput !== "") {
-      socket.send(JSON.stringify({ name: "Ollama", type: "ModChatMessage", message: currentOutput }));
-    }
-    socket.send(JSON.stringify({ name: "Ollama", type: "ModChatFinishedMessage" }));
+    mod.onUpdate(mod.name, chatMessage.message, mod.socket);
   } else if (message.type === "ModAliveMessage") {
     // console.log("Alive message received");
   }

@@ -1,4 +1,5 @@
 import { RegisterModType, SendMessageType } from "../../..";
+import { WebSocket } from "ws";
 
 export class Chat {
   private sendMessage: SendMessageType;
@@ -8,10 +9,12 @@ export class Chat {
     registerMethod("ChatCatAtT", "Chat", this.handleMessage.bind(this), this.onClose.bind(this));
   }
 
-  private handleMessage(message: string) {
+  private handleMessage(name: string, message: string, socket: WebSocket) {
     console.log("Chat:", "Handle Message", message);
-    this.sendMessage("ChatCatAtT: " + message);
+    this.sendMessage(name, message, socket);
   }
 
-  private onClose() {}
+  private onClose() {
+    console.log("Chat:", "Closing");
+  }
 }
