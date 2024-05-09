@@ -6,7 +6,7 @@ export class Chat {
   constructor(registerMethod: RegisterModType, sendMessage: SendMessageType) {
     console.log("Chat: mod loaded");
     this.sendMessage = sendMessage;
-    registerMethod("ChatCatAtT", "Chat", this.handleMessage.bind(this), this.onClose.bind(this));
+    registerMethod("Echo_Chat", "Chat", this.handleMessage.bind(this), this.onClose.bind(this));
   }
 
   private handleMessage(name: string, message: string, socket: WebSocket) {
