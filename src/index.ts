@@ -17,7 +17,7 @@ import { NAS } from "./mods/nas/nas";
 export type RegisterModType = (
   name: string,
   modType: ModType,
-  onUpdate: (message: string) => void,
+  onUpdate: (name: string, message: string, socket: WebSocket) => void,
   onClose: () => void
 ) => void;
 export type SendMessageType = (name: string, message: string, socket: WebSocket) => void;
@@ -52,7 +52,7 @@ const registerMods = () => {
 const registerMod: RegisterModType = (
   name: string,
   modType: ModType,
-  onUpdate: (message: string) => void,
+  onUpdate: (name: string, message: string, socket: WebSocket) => void,
   onClose: () => void
 ) => {
   console.log("Start");
