@@ -6,6 +6,8 @@ import { ModChatMessage } from "./models/ModChatMessage";
 import { ModType } from "./models/ModType";
 import { Chat } from "./mods/chat/chat/chat";
 import { NAS } from "./mods/nas/nas";
+import { OllamaChat } from "./mods/chat/llm/ollama";
+import { ModChatFinishedMessage } from "./models/ModChatFinishedMessage";
 
 // export const sendMessage = async (
 //   messageContent: string,
@@ -21,6 +23,7 @@ export type RegisterModType = (
   onClose: () => void
 ) => void;
 export type SendMessageType = (name: string, message: string, socket: WebSocket) => void;
+export type SendFinishMessageType = (name: string, socket: WebSocket) => void;
 export type ModProps = {
   name: string;
   modType: ModType;
@@ -45,8 +48,17 @@ const sendMessage: SendMessageType = (name: string, message: string, socket: Web
   socket.send(JSON.stringify(modChatMessage));
 };
 
+const sendFinishMessage: SendFinishMessageType = (name: string, socket: WebSocket) => {
+  const modChatMessage: ModChatFinishedMessage = {
+    name: name,
+    type: "ModChatFinishedMessage",
+  };
+  socket.send(JSON.stringify(modChatMessage));
+};
+
 const registerMods = () => {
-  const chat = new Chat(registerMod, sendMessage);
+  const chat = new Chat(registerMod, sendMessage, sendFinishMessage);
+  const ollama = new OllamaChat(registerMod, sendMessage, sendFinishMessage);
 };
 
 const registerMod: RegisterModType = (
