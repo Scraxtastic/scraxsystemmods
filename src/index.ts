@@ -8,6 +8,8 @@ import { Chat } from "./mods/chat/chat/chat";
 import { NAS } from "./mods/nas/nas";
 import { OllamaChat } from "./mods/chat/llm/ollama";
 import { ModChatFinishedMessage } from "./models/ModChatFinishedMessage";
+import "dotenv/config";
+import { NasNetworker } from "./mods/nas/nasNetworker";
 
 // export const sendMessage = async (
 //   messageContent: string,
@@ -39,7 +41,6 @@ const main = async () => {
 };
 
 const sendMessage: SendMessageType = (name: string, message: string, socket: WebSocket) => {
-  console.log("Mod: ", "Sending message", message);
   const modChatMessage: ModChatMessage = {
     name: name,
     message: message,
@@ -59,6 +60,7 @@ const sendFinishMessage: SendFinishMessageType = (name: string, socket: WebSocke
 const registerMods = () => {
   const chat = new Chat(registerMod, sendMessage, sendFinishMessage);
   const ollama = new OllamaChat(registerMod, sendMessage, sendFinishMessage);
+  const nas = new NasNetworker(registerMod, sendMessage, sendFinishMessage, { basePath: "tmp/nas/", caching: true });
 };
 
 const registerMod: RegisterModType = (
@@ -67,8 +69,7 @@ const registerMod: RegisterModType = (
   onUpdate: (name: string, message: string, socket: WebSocket) => void,
   onClose: () => void
 ) => {
-  console.log("Start");
-  const serverIP = "ws://localhost:8989";
+  const serverIP = process.env.ModServerAddress || "ws://localhost:8989";
   const socket = new WebSocket(serverIP);
   let mod: ModProps = { name: name, modType: modType, socket: socket, onUpdate: onUpdate, onClose: onClose };
   socket.on("open", () => {

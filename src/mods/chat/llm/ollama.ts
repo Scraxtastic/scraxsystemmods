@@ -7,7 +7,7 @@ export class OllamaChat {
   private sendFinishMessage: SendFinishMessageType;
   private ollama: Ollama;
   constructor(registerMethod: RegisterModType, sendMessage: SendMessageType, sendFinishMessage: SendFinishMessageType) {
-    console.log("Chat: mod loaded");
+    console.log("Ollama: mod loaded");
     this.sendMessage = sendMessage;
     this.sendFinishMessage = sendFinishMessage;
     this.ollama = new Ollama();
