@@ -13,6 +13,7 @@
   "license": "TODO",
   "dependencies": {
     "camera-capture": "^0.0.11",
+    "dotenv": "^16.4.5",
     "ollama-node": "^0.1.28",
     "ws": "^8.16.0"
   },
