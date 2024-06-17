@@ -7,16 +7,24 @@ export class OllamaChat {
   private sendFinishMessage: SendFinishMessageType;
   private ollama: Ollama;
   constructor(registerMethod: RegisterModType, sendMessage: SendMessageType, sendFinishMessage: SendFinishMessageType) {
-    console.log("Ollama: mod loaded");
-    this.sendMessage = sendMessage;
-    this.sendFinishMessage = sendFinishMessage;
-    this.ollama = new Ollama();
-    this.init(registerMethod);
+    try {
+      console.log("Ollama: mod loaded");
+      this.sendMessage = sendMessage;
+      this.sendFinishMessage = sendFinishMessage;
+      this.ollama = new Ollama();
+      this.init(registerMethod);
+    } catch (e) {
+      console.error("Couldn't load Ollama.");
+    }
   }
 
   private async init(registerMethod: RegisterModType) {
+    try{
     await this.ollama.setModel("llama2-uncensored");
     registerMethod("Ollama_Chat", "Chat", this.handleMessage.bind(this), this.onClose.bind(this));
+    }catch(e){
+      console.error("Couldn't load Ollama model.");
+    }
   }
 
   private async handleMessage(name: string, message: string, socket: WebSocket) {
