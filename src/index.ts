@@ -10,6 +10,9 @@ import { OllamaChat } from "./mods/chat/llm/ollama";
 import { ModChatFinishedMessage } from "./models/ModChatFinishedMessage";
 import "dotenv/config";
 import { NasNetworker } from "./mods/nas/nasNetworker";
+import path from "path";
+
+export const baseDir = path.join(__dirname, "..");
 
 // export const sendMessage = async (
 //   messageContent: string,
@@ -79,7 +82,11 @@ const registerMod: RegisterModType = (
     handleOnClose();
   });
   socket.on("message", async (data) => {
-    handleMessage(data, mod);
+    try {
+      handleMessage(data, mod);
+    } catch (e) {
+      console.log("ModMessage:", e);
+    }
   });
   registeredMods.push(mod);
 };
