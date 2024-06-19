@@ -49,19 +49,26 @@ export class NasNetworker {
     const nas: NAS = user.nas;
     const response = {
       type: "list",
-      data: nas.listDirectory().map((dirent: fs.Dirent) => {
-        return {
-          name: dirent.name,
-          isDirectory: dirent.isDirectory(),
-          size: fs.statSync(path.join(nas.getFullPath(), dirent.name)).size,
-        };
-      }),
+      data: nas
+        .listDirectory()
+        .map((dirent: fs.Dirent) => {
+          return {
+            name: dirent.name,
+            isDirectory: dirent.isDirectory(),
+            size: fs.statSync(path.join(nas.getFullPath(), dirent.name)).size,
+          };
+        })
+        .sort((a: any, b: any) => {
+          if (a.isDirectory && !b.isDirectory) return -1;
+          if (!a.isDirectory && b.isDirectory) return 1;
+          return a.name.localeCompare(b.name);
+        }),
       path: nas.getCurrentPath(),
     };
 
     console.log("NAS:", "Listing directory", response, nas.getFullPath());
     this.sendMessage(name, JSON.stringify(response), socket);
-    this.sendFinishMessage(name, socket);
+    // this.sendFinishMessage(name, socket);
   }
 
   private ensureUser(name: string, dir: string): any {
