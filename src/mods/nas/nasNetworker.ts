@@ -33,12 +33,13 @@ export class NasNetworker {
     if (messageInfo.type === "cd") {
       console.log("NAS:", "Changing directory", messageInfo);
       user.nas.changeDirectory(messageInfo.path);
+      //Handles sendMessage
       this.listDirectory(user, name, socket);
       return;
     }
     if (messageInfo.type === "read") {
-      this.sendMessage(name, user.nas.read(messageInfo.filename), socket);
-      this.sendFinishMessage(name, socket);
+      //Handles sendMessage
+      this.readFile(user, name, socket, messageInfo);
       return;
     }
     this.sendMessage(name, message, socket);
@@ -67,6 +68,19 @@ export class NasNetworker {
     };
 
     console.log("NAS:", "Listing directory", response, nas.getFullPath());
+    this.sendMessage(name, JSON.stringify(response), socket);
+    // this.sendFinishMessage(name, socket);
+  }
+
+  private readFile(user: any, name: string, socket: WebSocket, messageInfo: any) {
+    const nas: NAS = user.nas;
+    const response = {
+      type: "read",
+      data: user.nas.read(messageInfo.fileName),
+      path: nas.getCurrentPath(),
+    };
+
+    console.log("NAS:", "reading file", response, nas.getFullPath(), nas.getCurrentPath());
     this.sendMessage(name, JSON.stringify(response), socket);
     // this.sendFinishMessage(name, socket);
   }

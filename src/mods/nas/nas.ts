@@ -52,6 +52,10 @@ export class NAS {
     });
   }
 
+  public read(file: string): string {
+    return this.getFile(file);
+  }
+
   public getFile(file: string): string {
     return fs.readFileSync(path.join(this.getFullPath(), file)).toString();
   }
